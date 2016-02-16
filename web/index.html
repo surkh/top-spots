@@ -11,10 +11,10 @@
 
 <div ng-app="myApp" ng-controller="myCtrl">
 
-    {{ spotSelection.length }} spots selected
+    {{ spotSelection.length }} spots selected.
 
     <div>
-
+        <div> <input type="checkbox" ng-model="selectedAll" ng-click="checkAll()" /> Select all... </div>
         <div ng-repeat="spot in topSpots">
             <input
                     type="checkbox"
@@ -53,6 +53,18 @@
                 return spot;
             });
         }, true);
+
+        $scope.checkAll = function () {
+            if ($scope.selectedAll) {
+                $scope.selectedAll = true;
+            } else {
+                $scope.selectedAll = false;
+            }
+            angular.forEach($scope.topSpots, function (spot) {
+                spot.selected = $scope.selectedAll;
+            });
+
+        };
 
         $scope.topSpots = [
             {
