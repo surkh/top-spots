@@ -11,13 +11,17 @@
 
 <div ng-app="myApp" ng-controller="myCtrl">
 
-    First Name: <input type="text" ng-model="firstName"><br>
-    Last Name: <input type="text" ng-model="lastName"><br>
-    <br>
-    Full Name: {{firstName + " " + lastName}}
+    {{ spotSelection.length }} spots selected
 
     <div>
-        <li ng-repeat="spot in topSpots">
+
+        <div ng-repeat="spot in topSpots">
+            <input
+                    type="checkbox"
+                    name="selectedSpots[]"
+                    value="{{spot.url}}"
+                    ng-model="spot.selected"
+                    >
             <span>
                 <a href="{{ spot.url }}">{{ spot.name }}</a>
             </span>
@@ -25,18 +29,30 @@
                 {{ spot.address }}
                 <a href="http://www.google.com/maps/search/{{ spot.address }}">map</a>
             </span>
-        </li>
+        </div>
     </div>
-    two
 
 
 </div>
 
 <script>
     var app = angular.module('myApp', []);
-    app.controller('myCtrl', function($scope) {
+    app.controller('myCtrl', ['$scope', 'filterFilter', function($scope) {
         $scope.firstName= "Surkhab";
         $scope.lastName= "Niazi";
+        $scope.spotSelection = [];
+
+        // helper method to get selected fruits
+        $scope.selectedSpots = function selectedSpots() {
+            return filterFilter($scope.topSpots, { selected: true });
+        };
+
+        // watch fruits for changes
+        $scope.$watch('topSpots|filter:{selected:true}', function (nv) {
+            $scope.spotSelection = nv.map(function (spot) {
+                return spot;
+            });
+        }, true);
 
         $scope.topSpots = [
             {
@@ -561,7 +577,9 @@
             }
         ];
 
-    });
+    }
+
+    ]);
 
 
 // curl --get --data-urlencode 'address=320 North Central Ave, Glendale, CA' 'https://maps.googleapis.com/maps/api/geocode/json?key='
